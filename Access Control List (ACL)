@@ -1,0 +1,48 @@
+  select * from dba_network_acls;
+  grant execute on utl_http to user;
+  grant execute on sys.utl_tcp to  user;
+1-----------------------------------------------------
+  begin
+  dbms_network_acl_admin.create_acl (
+    acl          => 'utl_name.xml', 
+    description  => 'description',
+    principal    => 'user',
+    is_grant     => true, 
+    privilege    => 'connect',
+    start_date   => systimestamp,
+    end_date     => null);
+
+  commit;
+end;
+/
+2---------------------------------------------------
+
+    begin
+  dbms_network_acl_admin.add_privilege ( 
+    acl         => 'utl_name.xml', 
+    principal   => 'user',
+    is_grant    => true, 
+    privilege   => 'connect', 
+    position    => null, 
+    start_date  => null,
+    end_date    => null);
+
+  commit;
+end;
+/
+3----------------------------------------------
+begin
+  dbms_network_acl_admin.assign_acl(acl  => '/sys/acls/utl_name.xml',
+                                    host => 'host_name',
+                                    lower_port => 80,
+                                    upper_port => 10000 );
+  commit;
+end;
+------------------------------------------------
+begin
+  dbms_network_acl_admin.drop_acl ( 
+    acl         => 'utl_name.xml');
+
+  commit;
+end;
+/
